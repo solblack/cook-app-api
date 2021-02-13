@@ -1,0 +1,39 @@
+{
+  "name": "cook-app-api",
+  "version": "1.0.0",
+  "description": "Cook app API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "start:dev": "node -r dotenv/config index.js",
+    "dev": "nodemon -r dotenv/config index.js"
+  },
+  "contributors": [
+    {
+      "name": "Diego Lopez Grisanti",
+      "email": "diegolopezgrisanti@gmail.com",
+      "url": "https://github.com/diegolopezgrisanti/"
+    },
+    {
+      "name": "Fabricio Di Gennaro",
+      "email": "fabriciodigennaro9@gmail.com",
+      "url": "https://github.com/fabriciodigennaro/"
+    },
+    {
+      "name": "Sol Latorre Beorlegui",
+      "email": "solbeor@gmail.com",
+      "url": "https://github.com/solblack/"
+    }
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mysql2": "^2.2.5",
+    "sequelize": "^6.5.0"
+  },
+  "devDependencies": {
+    "dotenv": "^8.2.0",
+    "nodemon": "^2.0.7"
+  }
+}
