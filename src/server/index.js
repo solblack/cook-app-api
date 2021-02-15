@@ -36,6 +36,7 @@ class Server {
 
     initRouters = () => {
         console.log("Initializing routes...");
+        this._app.use("/recipes", this._routers.RecipeRoutes);
     }
 }
 
