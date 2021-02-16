@@ -114,7 +114,7 @@ class RecipeController {
       await transaction.commit();
       res
         .status(200)
-        .json({ message: `product with id ${req.params.id} edited`, recipe });
+        .json({ message: `Recipe with id ${req.params.id} edited`, recipe });
     } catch (err) {
       await transaction.rollback();
       res
@@ -146,7 +146,7 @@ class RecipeController {
 
       res
         .status(200)
-        .json({ message: `product with id ${req.params.id} deleted` });
+        .json({ message: `Recipe with id ${req.params.id} deleted` });
     } catch (err) {
       res
         .status(err.status || 500)
