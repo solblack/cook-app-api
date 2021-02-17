@@ -1,41 +1,34 @@
 const { Model } = require('sequelize');
 
-class Recipe extends Model {
+class UnitMeasure extends Model {
 
     static init(sequelize, DataTypes) {
         return super.init(
-            // columns data {}
+          
             {
                 id: {
                     type: DataTypes.INTEGER(11),
                     primaryKey: true,
                     autoIncrement: true,
                 },
-                title: {
+                name: {
                     type: DataTypes.STRING(100),
                     allowNull: false
                 },
-                description: {
-                    type: DataTypes.TEXT,
+                abbreviation: {
+                    type: DataTypes.STRING(45),
                     allowNull: false
                 }
             },
             // options {}
             {
-                tableName: "recipes",
+                tableName: "unit_measures",
                 timestamps: false,
                 sequelize
             }
         );
     }
 
-    static associate(models) {
-        models.Recipe.belongsTo(models.User, {
-            foreignKey: "user_id",
-            as: "user"
-        });  
-    }
-
 }
 
-module.exports = Recipe;
+module.exports = UnitMeasure;

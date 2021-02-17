@@ -23,6 +23,7 @@ class Ingredient extends Model {
       }
     );
   }
+
 }
 
 module.exports = Ingredient;
