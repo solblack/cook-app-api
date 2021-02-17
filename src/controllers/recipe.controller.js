@@ -43,6 +43,11 @@ class RecipeController {
           },
         ],
       });
+      if(!recipe){
+        const error = new Error('Bad request. Invalid ID');
+        error.status = 400;
+        throw error;
+      }
       res.status(200).json(recipe);
     } catch (err) {
       res
@@ -84,6 +89,14 @@ class RecipeController {
   update = async (req, res) => {
     const transaction = await db.sequelize.transaction();
     try {
+      const recipe = await db.Recipe.findByPk(req.params.id);
+
+      if(!recipe){
+        const error = new Error('Bad request. Invalid ID');
+        error.status = 400;
+        throw error;
+      }
+
       await db.Recipe.update(
         {
           title: req.body.title,
@@ -98,12 +111,10 @@ class RecipeController {
         }
       );
 
-      const recipe = await db.Recipe.findByPk(req.params.id);
-
       await transaction.commit();
       res
         .status(200)
-        .json({ message: `recipe with id ${req.params.id} edited`, recipe });
+        .json({ message: `Recipe with id ${req.params.id} edited`, recipe });
     } catch (err) {
       await transaction.rollback();
       res
@@ -119,14 +130,23 @@ class RecipeController {
    */
   delete = async (req, res, next) => {
     try {
+      const recipe = await db.Recipe.findByPk(req.params.id);
+
+      if(!recipe){
+        const error = new Error('Bad request. Invalid ID');
+        error.status = 400;
+        throw error;
+      }
+
       const deleteRecipe = await db.Recipe.destroy({
         where: {
           id: req.params.id,
         },
       });
+
       res
         .status(200)
-        .json({ message: `recipe with id ${req.params.id} deleted` });
+        .json({ message: `Recipe with id ${req.params.id} deleted` });
     } catch (err) {
       res
         .status(err.status || 500)
