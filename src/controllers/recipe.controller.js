@@ -21,7 +21,7 @@ class RecipeController {
       });
       res.status(200).json({ results: recipes });
     } catch (err) {
-			next(error);
+			next(err);
     }
   };
 
@@ -188,7 +188,7 @@ class RecipeController {
       );
       await transaction.commit();
       res.status(200).json(newRecipeIngredient);
-    } catch (error) {
+    } catch (err) {
       await transaction.rollback();
       next(err);
     }
@@ -236,7 +236,7 @@ class RecipeController {
         .json({
           message: `Recipe ingredient with id ${req.params.recipeId} edited`,
         });
-    } catch (error) {
+    } catch (err) {
       await transaction.rollback();
       next(err);
     }
@@ -269,7 +269,7 @@ class RecipeController {
         .json({
           message: `Recipe ingredient with id ${req.params.recipeId} deleted`,
         });
-    } catch (error) {
+    } catch (err) {
       next(err);
     }
   };
