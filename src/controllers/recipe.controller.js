@@ -190,9 +190,7 @@ class RecipeController {
       res.status(200).json(newRecipeIngredient);
     } catch (error) {
       await transaction.rollback();
-      res
-        .status(error.status || 500)
-        .json({ message: error.message || "Internal server error" });
+      next(err);
     }
   };
 
@@ -240,9 +238,7 @@ class RecipeController {
         });
     } catch (error) {
       await transaction.rollback();
-      res
-        .status(error.status || 500)
-        .json({ message: error.message || "Internal server error" });
+      next(err);
     }
   };
 
@@ -274,9 +270,7 @@ class RecipeController {
           message: `Recipe ingredient with id ${req.params.recipeId} deleted`,
         });
     } catch (error) {
-      res
-        .status(error.status || 500)
-        .json({ message: error.message || "Internal server error" });
+      next(err);
     }
   };
 }
