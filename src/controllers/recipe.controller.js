@@ -21,9 +21,7 @@ class RecipeController {
       });
       res.status(200).json({ results: recipes });
     } catch (err) {
-      res
-        .status(err.status || 500)
-        .json({ message: err.message || "Internal server error" });
+			next(error);
     }
   };
 
@@ -45,9 +43,7 @@ class RecipeController {
       });
       res.status(200).json(recipe);
     } catch (err) {
-      res
-        .status(err.status || 500)
-        .json({ message: err.message || "Internal server error" });
+      next(err);
     }
   };
 
@@ -70,9 +66,7 @@ class RecipeController {
       res.status(201).json(newRecipe);
     } catch (err) {
       await transaction.rollback();
-      res
-        .status(err.status || 500)
-        .json({ message: err.message || "Internal server error" });
+      next(err);
     }
   };
 
@@ -106,9 +100,7 @@ class RecipeController {
         .json({ message: `product with id ${req.params.id} edited`, recipe });
     } catch (err) {
       await transaction.rollback();
-      res
-        .status(err.status || 500)
-        .json({ message: err.message || "Internal server error" });
+      next(err);
     }
   };
 
@@ -128,9 +120,7 @@ class RecipeController {
         .status(200)
         .json({ message: `product with id ${req.params.id} deleted` });
     } catch (err) {
-      res
-        .status(err.status || 500)
-        .json({ message: err.message || "Internal server error" });
+      next(err);
     }
   };
 }
