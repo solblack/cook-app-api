@@ -11,19 +11,10 @@ class RecipeController {
    */
   getAll = async (req, res, next) => {
     try {
-      const recipes = await db.Recipe.findAll({
-        include: [
-          {
-            model: db.User,
-            as: "user",
-          },
-        ],
-      });
+      const recipes = await db.Recipe.findAll();
       res.status(200).json({ results: recipes });
     } catch (err) {
-      res
-        .status(err.status || 500)
-        .json({ message: err.message || "Internal server error" });
+			next(err);
     }
   };
 
@@ -35,14 +26,7 @@ class RecipeController {
    */
   getOneById = async (req, res, next) => {
     try {
-      const recipe = await db.Recipe.findByPk(req.params.id, {
-        include: [
-          {
-            model: db.User,
-            as: "user",
-          },
-        ],
-      });
+      const recipe = await db.Recipe.findByPk(req.params.id);
       if(!recipe){
         const error = new Error('Bad request. Invalid ID');
         error.status = 400;
@@ -50,9 +34,7 @@ class RecipeController {
       }
       res.status(200).json(recipe);
     } catch (err) {
-      res
-        .status(err.status || 500)
-        .json({ message: err.message || "Internal server error" });
+      next(err);
     }
   };
 
@@ -75,9 +57,7 @@ class RecipeController {
       res.status(201).json(newRecipe);
     } catch (err) {
       await transaction.rollback();
-      res
-        .status(err.status || 500)
-        .json({ message: err.message || "Internal server error" });
+      next(err);
     }
   };
 
@@ -117,14 +97,12 @@ class RecipeController {
         .json({ message: `Recipe with id ${req.params.id} edited`, recipe });
     } catch (err) {
       await transaction.rollback();
-      res
-        .status(err.status || 500)
-        .json({ message: err.message || "Internal server error" });
+      next(err);
     }
   };
 
   /**
-   * Delete a product
+   * Delete a recipe
    * @param {*} req
    * @param {*} res
    */
@@ -148,9 +126,7 @@ class RecipeController {
         .status(200)
         .json({ message: `Recipe with id ${req.params.id} deleted` });
     } catch (err) {
-      res
-        .status(err.status || 500)
-        .json({ message: err.message || "Internal server error" });
+      next(err);
     }
   };
 
@@ -198,11 +174,9 @@ class RecipeController {
       );
       await transaction.commit();
       res.status(200).json(newRecipeIngredient);
-    } catch (error) {
+    } catch (err) {
       await transaction.rollback();
-      res
-        .status(error.status || 500)
-        .json({ message: error.message || "Internal server error" });
+      next(err);
     }
   };
 
@@ -248,11 +222,9 @@ class RecipeController {
         .json({
           message: `Recipe ingredient with id ${req.params.recipeId} edited`,
         });
-    } catch (error) {
+    } catch (err) {
       await transaction.rollback();
-      res
-        .status(error.status || 500)
-        .json({ message: error.message || "Internal server error" });
+      next(err);
     }
   };
 
@@ -283,10 +255,8 @@ class RecipeController {
         .json({
           message: `Recipe ingredient with id ${req.params.recipeId} deleted`,
         });
-    } catch (error) {
-      res
-        .status(error.status || 500)
-        .json({ message: error.message || "Internal server error" });
+    } catch (err) {
+      next(err);
     }
   };
 }

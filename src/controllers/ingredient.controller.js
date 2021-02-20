@@ -19,8 +19,8 @@ class IngredientController {
             const ingredients = await db.Ingredient.findAll();
             res.status(200).json({ results: ingredients});
             
-        } catch (error) {
-            res.status(error.status || 500).json({ message: error.message || 'Internal server error'});
+        } catch (err) {
+            next(err);
         }
 
     }
@@ -41,8 +41,8 @@ class IngredientController {
             }
             res.status(200).json(ingredient);
               
-        } catch (error) {
-            res.status(error.status || 500).json({ message: error.message || 'Internal server error'});
+        } catch (err) {
+            next(err);
         }
 
     }
@@ -65,9 +65,9 @@ class IngredientController {
             await transaction.commit();
 
             res.status(201).json(newIngredient);
-        } catch (error) {
+        } catch (err) {
             await transaction.rollback();
-            res.status(error.status || 500).json({ message: error.message || 'Internal server error'});
+            next(err);
         }
 
     }
@@ -96,9 +96,9 @@ class IngredientController {
             await transaction.commit();
             res.status(200).json({message: `ingredient with id ${req.params.id} edited`});
             
-        } catch (error) {
+        } catch (err) {
             await transaction.rollback();
-            res.status(error.status || 500).json({ message: error.message || 'Internal server error'});
+            next(err);
         }
 
     }
@@ -123,8 +123,8 @@ class IngredientController {
             }
             res.status(200).json({message: `ingredient with id ${req.params.id} deleted`});
             
-        } catch (error) {
-            res.status(error.status || 500).json({ message: error.message || 'Internal server error'});
+        } catch (err) {
+            next(err);
         }
 
     }

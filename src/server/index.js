@@ -1,6 +1,7 @@
 const express = require('express');
 const routers = require('../routes');
 
+const { ErrorMiddleware } = require("../middlewares");
 class Server {
 
     constructor(){
@@ -17,7 +18,7 @@ class Server {
         this.initRouters();
 
         // Setting error middleware
-        // this._app.use(ErrorMiddleware);
+        this._app.use(ErrorMiddleware);
 
     }
 
