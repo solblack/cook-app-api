@@ -1,5 +1,6 @@
 const db = require("../models");
 const { Op } = require("sequelize");
+const Validator = require('validatorjs');
 class RecipeController {
   constructor() {}
 
@@ -45,13 +46,33 @@ class RecipeController {
    * @param {*} next
    */
   create = async (req, res, next) => {
+  
     const transaction = await db.sequelize.transaction();
     try {
+      const rules = {
+        title: 'required|between:3,100|string',
+        description: ['required', 'between:10,10000', 'string'],
+        user_id: 'required|numeric'
+      };
+      let validation = new Validator(req.body, rules);
+      if(validation.fails()){
+        const error = new Error('Validation error');
+        error.errors = validation.errors.all();
+        error.status = 400;
+        throw error;
+      }
+
       let recipe = {
         title: req.body.title,
         description: req.body.description,
         user_id: req.body.user_id,
       };
+      const user = await db.User.findByPk(req.body.user_id);
+      if(!user){
+        const error = new Error('Bad request. Invalid user ID');
+        error.status = 400;
+        throw error;
+      }
       const newRecipe = await db.Recipe.create(recipe, { transaction });
       await transaction.commit();
       res.status(201).json(newRecipe);
