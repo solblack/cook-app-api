@@ -116,7 +116,7 @@ class RecipeController {
   };
 
   /**
-   * Delete a product
+   * Delete a recipe
    * @param {*} req
    * @param {*} res
    */
