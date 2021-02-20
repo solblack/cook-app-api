@@ -11,14 +11,7 @@ class RecipeController {
    */
   getAll = async (req, res, next) => {
     try {
-      const recipes = await db.Recipe.findAll({
-        include: [
-          {
-            model: db.User,
-            as: "user",
-          },
-        ],
-      });
+      const recipes = await db.Recipe.findAll();
       res.status(200).json({ results: recipes });
     } catch (err) {
 			next(err);
@@ -33,14 +26,7 @@ class RecipeController {
    */
   getOneById = async (req, res, next) => {
     try {
-      const recipe = await db.Recipe.findByPk(req.params.id, {
-        include: [
-          {
-            model: db.User,
-            as: "user",
-          },
-        ],
-      });
+      const recipe = await db.Recipe.findByPk(req.params.id);
       if(!recipe){
         const error = new Error('Bad request. Invalid ID');
         error.status = 400;
