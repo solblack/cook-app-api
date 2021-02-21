@@ -1,6 +1,6 @@
 const db = require("../models");
 const { Op } = require("sequelize");
-const Validator = require('validatorjs');
+const Validator = require("validatorjs");
 class RecipeController {
   constructor() {}
 
@@ -12,10 +12,21 @@ class RecipeController {
    */
   getAll = async (req, res, next) => {
     try {
-      const recipes = await db.Recipe.findAll();
+      const recipes = await db.Recipe.findAll({
+        include: [
+          {
+            model: db.RecipeIngredient,
+            as: "ingredients",
+            include: [
+              { model: db.Ingredient, as: "ingredient" },
+              { model: db.UnitMeasure, as: "unit_measure" },
+            ],
+          },
+        ],
+      });
       res.status(200).json({ results: recipes });
     } catch (err) {
-			next(err);
+      next(err);
     }
   };
 
@@ -27,9 +38,20 @@ class RecipeController {
    */
   getOneById = async (req, res, next) => {
     try {
-      const recipe = await db.Recipe.findByPk(req.params.id);
-      if(!recipe){
-        const error = new Error('Bad request. Invalid ID');
+      const recipe = await db.Recipe.findByPk(req.params.id, {
+        include: [
+          {
+            model: db.RecipeIngredient,
+            as: "ingredients",
+            include: [
+              { model: db.Ingredient, as: "ingredient" },
+              { model: db.UnitMeasure, as: "unit_measure" },
+            ],
+          },
+        ],
+      });
+      if (!recipe) {
+        const error = new Error("Bad request. Invalid ID");
         error.status = 400;
         throw error;
       }
@@ -46,17 +68,16 @@ class RecipeController {
    * @param {*} next
    */
   create = async (req, res, next) => {
-  
     const transaction = await db.sequelize.transaction();
     try {
       const rules = {
-        title: 'required|between:3,100|string',
-        description: ['required', 'between:10,10000', 'string'],
-        user_id: 'required|numeric'
+        title: "required|between:3,100|string",
+        description: ["required", "between:10,10000", "string"],
+        user_id: "required|numeric",
       };
       let validation = new Validator(req.body, rules);
-      if(validation.fails()){
-        const error = new Error('Validation error');
+      if (validation.fails()) {
+        const error = new Error("Validation error");
         error.errors = validation.errors.all();
         error.status = 400;
         throw error;
@@ -68,8 +89,8 @@ class RecipeController {
         user_id: req.body.user_id,
       };
       const user = await db.User.findByPk(req.body.user_id);
-      if(!user){
-        const error = new Error('Bad request. Invalid user ID');
+      if (!user) {
+        const error = new Error("Bad request. Invalid user ID");
         error.status = 400;
         throw error;
       }
@@ -86,31 +107,46 @@ class RecipeController {
    * updates a recipe
    * @param {*} req
    * @param {*} res
+   * @param {*} next
    */
-  update = async (req, res) => {
+  update = async (req, res, next) => {
     const transaction = await db.sequelize.transaction();
     try {
-      const recipe = await db.Recipe.findByPk(req.params.id);
-
-      if(!recipe){
-        const error = new Error('Bad request. Invalid ID');
+      const rules = {
+        title: "required|between:3,100|string",
+        description: ["required", "between:10,10000", "string"],
+        user_id: "required|numeric",
+      };
+      let validation = new Validator(req.body, rules);
+      if (validation.fails()) {
+        const error = new Error("Validation error");
+        error.errors = validation.errors.all();
         error.status = 400;
         throw error;
       }
-
-      await db.Recipe.update(
-        {
-          title: req.body.title,
-          description: req.body.description,
-          user_id: req.body.user_id,
-        },
-        {
-          where: {
-            id: req.params.id,
+      const recipe = await db.Recipe.findByPk(req.params.id, {
+        include: [
+          {
+            model: db.RecipeIngredient,
+            as: "ingredients",
+            include: [
+              { model: db.Ingredient, as: "ingredient" },
+              { model: db.UnitMeasure, as: "unit_measure" },
+            ],
           },
-          transaction,
-        }
-      );
+        ],
+      });
+
+      if (!recipe) {
+        const error = new Error("Bad request. Invalid ID");
+        error.status = 400;
+        throw error;
+      }
+      recipe.title = req.body.title;
+      recipe.description = req.body.description;
+      recipe.user_id = req.body.user_id;
+      await recipe.save(transaction);
+      await recipe.reload(transaction);
 
       await transaction.commit();
       res
@@ -131,8 +167,8 @@ class RecipeController {
     try {
       const recipe = await db.Recipe.findByPk(req.params.id);
 
-      if(!recipe){
-        const error = new Error('Bad request. Invalid ID');
+      if (!recipe) {
+        const error = new Error("Bad request. Invalid ID");
         error.status = 400;
         throw error;
       }
@@ -161,6 +197,21 @@ class RecipeController {
     const transaction = await db.sequelize.transaction();
     try {
       // Validate IDs
+      const rules = {
+        ingredient_id: "required|numeric",
+        quantity: "required|between:0,10000|numeric",
+        unit_measure_id: "required|numeric",
+      };
+      1;
+
+      let validation = new Validator(req.body, rules);
+      if (validation.fails()) {
+        const error = new Error("Validation error");
+        error.errors = validation.errors.all();
+        error.status = 400;
+        throw error;
+      }
+
       const ingredient = await db.Ingredient.findByPk(req.body.ingredient_id);
       if (!ingredient) {
         const error = new Error("Bad request. Invalid ingredient ID");
@@ -210,6 +261,19 @@ class RecipeController {
   editIngredient = async (req, res, next) => {
     const transaction = await db.sequelize.transaction();
     try {
+      const rules = {
+        quantity: "required|between:0,10000|numeric",
+        unit_measure_id: "required|numeric",
+      };
+      1;
+
+      let validation = new Validator(req.body, rules);
+      if (validation.fails()) {
+        const error = new Error("Validation error");
+        error.errors = validation.errors.all();
+        error.status = 400;
+        throw error;
+      }
       // Validate IDs
       const unitMeasure = await db.UnitMeasure.findByPk(
         req.body.unit_measure_id
@@ -238,11 +302,9 @@ class RecipeController {
         where: { id: req.params.id },
       });
       await transaction.commit();
-      res
-        .status(200)
-        .json({
-          message: `Recipe ingredient with id ${req.params.recipeId} edited`,
-        });
+      res.status(200).json({
+        message: `Recipe ingredient with id ${req.params.recipeId} edited`,
+      });
     } catch (err) {
       await transaction.rollback();
       next(err);
@@ -266,16 +328,14 @@ class RecipeController {
         error.status = 400;
         throw error;
       }
-       await db.RecipeIngredient.destroy({
+      await db.RecipeIngredient.destroy({
         where: {
           id: req.params.id,
         },
       });
-      res
-        .status(200)
-        .json({
-          message: `Recipe ingredient with id ${req.params.recipeId} deleted`,
-        });
+      res.status(200).json({
+        message: `Recipe ingredient with id ${req.params.recipeId} deleted`,
+      });
     } catch (err) {
       next(err);
     }
