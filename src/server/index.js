@@ -39,7 +39,7 @@ class Server {
         console.log("Initializing routes...");
         this._app.use("/recipes", this._routers.RecipeRoutes);
         this._app.use("/ingredients", this._routers.IngredientRoutes);
-
+        this._app.use("/users", this._routers.UserRoutes);
     }
 }
 
