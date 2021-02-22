@@ -34,6 +34,10 @@ class Recipe extends Model {
             foreignKey: "user_id",
             as: "user"
         });  
+        models.Recipe.hasMany(models.RecipeIngredient, {
+            foreignKey: "recipe_id",
+            as: "ingredients"
+        }); 
     }
 
 }
