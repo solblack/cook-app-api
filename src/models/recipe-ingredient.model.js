@@ -18,7 +18,7 @@ class RecipeIngredient extends Model {
           allowNull: false,
         },
         quantity: {
-          type: DataTypes.INTEGER(11),
+          type: DataTypes.DECIMAL(5,2),
           allownull: false,
         },
         unit_measure_id: {
@@ -43,7 +43,7 @@ class RecipeIngredient extends Model {
     });
     models.RecipeIngredient.belongsTo(models.UnitMeasure, {
       foreignKey: "unit_measure_id",
-      as: "unitMeasure",
+      as: "unit_measure",
     });
     models.RecipeIngredient.belongsTo(models.Ingredient, {
         foreignKey: "ingredient_id",

@@ -1,7 +1,6 @@
 const db = require('../models');
 const {Op} = require('sequelize');
-
-
+const Validator = require('validatorjs');
 class IngredientController {
 
     constructor() {
@@ -57,6 +56,17 @@ class IngredientController {
 
         const transaction = await db.sequelize.transaction();
         try {
+            const rules = {
+                name: 'required|between:3,100|string'
+              };
+              let validation = new Validator(req.body, rules);
+              if(validation.fails()){
+                const error = new Error('Validation error');
+                error.errors = validation.errors.all();
+                error.status = 400;
+                throw error;
+              }
+            
             let ingredient = {
                 name: req.body.name,
             };
@@ -82,6 +92,16 @@ class IngredientController {
 
         const transaction = await db.sequelize.transaction();
         try {
+            const rules = {
+                name: 'required|between:3,100|string'
+              };
+              let validation = new Validator(req.body, rules);
+              if(validation.fails()){
+                const error = new Error('Validation error');
+                error.errors = validation.errors.all();
+                error.status = 400;
+                throw error;
+              }
 
             const ingredient = await db.Ingredient.findByPk(req.params.id);
             if(!ingredient){
