@@ -25,8 +25,8 @@ class UserController {
             
             let response = await this._authService.register(req.body);
             res.status(201).json(response);  
-        } catch (error) {
-            next(error)
+        } catch (err) {
+            next(err)
         }
     }
 
