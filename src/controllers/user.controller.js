@@ -12,8 +12,7 @@ class UserController {
                 name: ['required', 'between:3,45', 'regex:/^[a-zA-Z ]+$/'],
                 lastname: ['required', 'between:3,100', 'regex:/^[a-zA-Z ]+$/'],
                 email: ['required', 'between:3,100', 'email'],
-                password: ['required', 'between:4,200'],
-                is_admin: ['required', 'boolean'],
+                password: ['required', 'between:4,200']
             };
             let validation = new Validator(req.body, rules);
             if (validation.fails()) {
@@ -22,7 +21,7 @@ class UserController {
               error.status = 400;
               throw error;
             }
-            
+            req.body.is_admin = 0;
             let response = await this._authService.register(req.body);
             res.status(201).json(response);  
         } catch (err) {
