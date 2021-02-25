@@ -1,5 +1,7 @@
 const { AuthService } = require('../services');
 const Validator = require("validatorjs");
+const db = require("../models");
+const { Op } = require("sequelize");
 class UserController {
 
     constructor(){
@@ -35,6 +37,23 @@ class UserController {
             res.status(200).json(response);
             
         } catch (err) {
+            next(err)
+        }
+    }
+
+    setAdminRole = async (req, res, next) => {
+        const transaction = await db.sequelize.transaction();
+        try {
+            const user = await db.User.findByPk(req.params.id);
+            user.is_admin = req.body.is_admin;
+            await user.save(transaction);
+
+            await transaction.commit();
+            res
+              .status(200)
+              .json({ message: `User with id ${req.params.id} edited`, user });      
+        } catch (err) {
+            await transaction.rollback();
             next(err)
         }
     }
