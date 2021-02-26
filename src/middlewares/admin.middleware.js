@@ -12,7 +12,6 @@ module.exports = (req, res, next) => {
     }
     const tokenDecoded = jwt.verify(token, process.env.JWT_SECRET);
     const expired = tokenDecoded.exp < (new Date().getTime()) / 1000;
-    console.log(tokenDecoded);
 
     if(expired){
         const error = new Error('Access denied. Expired token');

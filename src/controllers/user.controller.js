@@ -44,14 +44,14 @@ class UserController {
     setAdminRole = async (req, res, next) => {
         const transaction = await db.sequelize.transaction();
         try {
-            const user = await db.User.findByPk(req.params.id);
+            const user = await db.User.findByPk(req.body.id);
             user.is_admin = req.body.is_admin;
             await user.save(transaction);
 
             await transaction.commit();
             res
               .status(200)
-              .json({ message: `User with id ${req.params.id} edited`, user });      
+              .json({ message: `User with id ${req.body.id} edited` });      
         } catch (err) {
             await transaction.rollback();
             next(err)
