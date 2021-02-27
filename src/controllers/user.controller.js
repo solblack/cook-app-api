@@ -68,6 +68,12 @@ class UserController {
             }
             const user = await db.User.findByPk(req.body.user_id);
 
+            if(!user){
+                const error = new Error('User does not exist');
+                error.status = 400;
+                throw error
+            }
+
             if (user.id == req.user.id) {
                 const error = new Error("A user cannot edit its role. Contact another admin user to make changes");
                 error.status = 400;
