@@ -10,6 +10,7 @@ module.exports = (req, res, next) => {
             throw error;
         }
         const tokenDecoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = tokenDecoded;
         const expired = tokenDecoded.exp < (new Date().getTime()) / 1000;
 
         if(expired){
